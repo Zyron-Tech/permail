@@ -65,7 +65,7 @@ export function SendReport({
       {complete && campaign.sent_count > 0 ? (
         <div className="card pop mb-5 border-moss-soft bg-moss-pale p-5">
           <p className="eyebrow mb-2 text-moss">Delivered</p>
-          <h2 className="font-display text-2xl font-bold tracking-tight text-moss sm:text-3xl">
+          <h2 className="font-display text-2xl font-semibold tracking-tight text-moss sm:text-3xl">
             {formatCount(campaign.sent_count)} {plural(campaign.sent_count, "person", "people")} got
             a letter meant for them.
           </h2>
@@ -85,11 +85,11 @@ export function SendReport({
             {campaign.failed_count > 0 ? ` · ${campaign.failed_count} failed` : ""} of{" "}
             {campaign.total_count}
           </p>
-          {resuming ? <p className="ml-auto font-mono text-xs text-wine">resuming…</p> : null}
+          {resuming ? <p className="ml-auto font-mono text-xs text-pine">resuming…</p> : null}
         </div>
 
         <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-line">
-          <div className="h-full bg-wine transition-all duration-500" style={{ width: `${progress}%` }} />
+          <div className="h-full bg-pine transition-all duration-500" style={{ width: `${progress}%` }} />
         </div>
 
         <p className="mt-3.5 truncate text-sm text-ink">
@@ -103,7 +103,7 @@ export function SendReport({
             key={value}
             onClick={() => setFilter(value)}
             className={`rounded-full border px-3 py-1 text-sm font-medium capitalize transition-colors ${
-              filter === value ? "border-wine bg-wine text-sun" : "border-line bg-card text-ash"
+              filter === value ? "border-pine bg-pine text-cream" : "border-line bg-card text-ash"
             }`}
           >
             {value}

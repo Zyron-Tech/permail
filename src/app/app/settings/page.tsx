@@ -27,7 +27,7 @@ export default async function SettingsPage() {
         <p className="label">Sending account</p>
 
         <div className="flex flex-wrap items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-wine font-display text-base font-bold text-sun">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-pine font-display text-base font-semibold text-cream">
             {(profile?.full_name ?? user!.email ?? "?").charAt(0).toUpperCase()}
           </span>
           <div className="min-w-0">
@@ -39,7 +39,7 @@ export default async function SettingsPage() {
 
           <span
             className={`ml-auto inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider ${
-              account?.can_send ? "border-wine bg-wine text-sun" : "border-sun bg-sun-soft text-wine"
+              account?.can_send ? "border-pine bg-pine text-cream" : "border-sun bg-sun-soft text-pine"
             }`}
           >
             {account?.can_send ? "ready to send" : "not authorised"}

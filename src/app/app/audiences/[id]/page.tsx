@@ -41,7 +41,7 @@ export default async function AudiencePage({ params }: { params: Promise<{ id: s
   return (
     <>
       <div className="mb-6">
-        <Link href="/app/audiences" className="eyebrow text-ash transition-colors hover:text-wine">
+        <Link href="/app/audiences" className="eyebrow text-ash transition-colors hover:text-pine">
           ← Audiences
         </Link>
 

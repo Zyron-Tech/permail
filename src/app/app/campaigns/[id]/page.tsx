@@ -104,7 +104,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
 function Header({ name, campaignId }: { name: string; campaignId?: string }) {
   return (
     <div className="mb-5 flex items-center gap-3">
-      <Link href="/app" className="eyebrow text-ash transition-colors hover:text-wine">
+      <Link href="/app" className="eyebrow text-ash transition-colors hover:text-pine">
         ← Campaigns
       </Link>
       <span className="sr-only">{name}</span>

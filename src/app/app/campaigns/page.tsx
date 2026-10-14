@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createCampaign } from "@/lib/actions";
-import { PageHeader, StatusPill, formatWhen } from "@/components/ui";
+import { PageHeader, StatusPill, EmptyState, formatWhen } from "@/components/ui";
+import { NoCampaignsArt } from "@/components/app-art";
 import { plural } from "@/lib/progress";
 import type { Campaign } from "@/lib/types";
 
@@ -34,26 +35,22 @@ export default async function CampaignsPage() {
         title="Your sends"
         action={
           <form action={createCampaign}>
-            <button className="btn btn-primary edge-sun">New campaign</button>
+            <button className="btn btn-primary">New campaign</button>
           </form>
         }
       />
 
       {all.length === 0 ? (
-        <div className="card px-5 py-12 text-center sm:py-16">
-          <p className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-sun font-display text-xl font-bold text-wine">
-            1
-          </p>
-          <h2 className="font-display text-xl font-bold tracking-tight text-ink">
-            Nothing sent yet — that&apos;s the fun part
-          </h2>
-          <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-ash">
-            {audiences.count
+        <EmptyState
+          art={<NoCampaignsArt className="w-full" />}
+          title="Nothing sent yet — that’s the fun part"
+          body={
+            audiences.count
               ? "You already have an audience. Write one draft, drop your columns into it as merge tags, and Permail handles the rest."
-              : "You'll want an audience first — a list of people and whatever details you'd like to mention. Then one draft covers everyone."}
-          </p>
-
-          <div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
+              : "You’ll want an audience first — a list of people and whatever details you’d like to mention. Then one draft covers everyone."
+          }
+        >
+          <div className="mt-6 flex w-full flex-col justify-center gap-2 sm:w-auto sm:flex-row">
             <form action={createCampaign}>
               <button className="btn btn-primary w-full sm:w-auto">Write a campaign</button>
             </form>
@@ -63,7 +60,7 @@ export default async function CampaignsPage() {
               </Link>
             ) : null}
           </div>
-        </div>
+        </EmptyState>
       ) : (
         <div className="space-y-8">
           {drafts.length > 0 ? (
@@ -90,19 +87,20 @@ function Group({
   return (
     <section>
       <h2 className="mb-3 flex items-baseline gap-2">
-        <span className="font-display text-lg font-bold tracking-tight text-ink">{title}</span>
+        <span className="font-display text-lg font-semibold tracking-tight text-ink">{title}</span>
         <span className="font-mono text-xs text-mist">{count}</span>
       </h2>
 
       <ul className="space-y-2.5">
-        {campaigns.map((campaign) => (
+        {campaigns.map((campaign, index) => (
           <li key={campaign.id}>
             <Link
               href={`/app/campaigns/${campaign.id}`}
-              className="card flex flex-col gap-3 px-4 py-4 transition-colors hover:border-wine sm:flex-row sm:items-center sm:gap-5"
+              className="card tap enter flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:gap-5"
+              style={{ ["--i" as string]: index }}
             >
               <div className="min-w-0 flex-1">
-                <p className="truncate font-display text-lg font-semibold tracking-tight text-ink">
+                <p className="truncate font-display text-[17px] font-semibold tracking-tight text-ink">
                   {campaign.name}
                 </p>
                 <p className="mt-0.5 truncate text-sm text-ash">

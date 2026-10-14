@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLayoutEffect, useRef, useState } from "react";
+import { useLinkStatus } from "next/link";
+import { LinkSpinner } from "@/components/route-progress";
 
 const ITEMS = [
   { href: "/app", label: "Home", icon: HomeIcon, match: (p: string) => p === "/app" },
@@ -25,26 +28,67 @@ const ITEMS = [
   },
 ];
 
+/**
+ * One pill that travels between the tabs rather than four that switch on and
+ * off. It is measured from the active link, so it stays right through font
+ * loading and window resizes, and it only animates once it has a position —
+ * otherwise it would slide in from the left on first paint.
+ */
 export function DesktopNav() {
   const pathname = usePathname();
+  const listRef = useRef<HTMLDivElement>(null);
+  const [pill, setPill] = useState<{ x: number; w: number } | null>(null);
+
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+
+    function place() {
+      const active = list!.querySelector<HTMLElement>("[data-active='true']");
+      if (!active) return setPill(null);
+      setPill({ x: active.offsetLeft, w: active.offsetWidth });
+    }
+
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(list);
+    document.fonts?.ready.then(place).catch(() => {});
+    return () => observer.disconnect();
+  }, [pathname]);
 
   return (
-    <nav className="hidden items-center gap-1 sm:flex">
+    <div ref={listRef} className="relative hidden items-center gap-1 sm:flex">
+      {pill ? (
+        <span
+          aria-hidden="true"
+          className="absolute top-0 h-full rounded-full bg-pine"
+          style={{
+            transform: `translateX(${pill.x}px)`,
+            width: pill.w,
+            transition: "transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.28s cubic-bezier(0.2, 0.8, 0.2, 1)",
+          }}
+        />
+      ) : null}
+
       {ITEMS.map((item) => {
         const active = item.match(pathname);
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
-              active ? "bg-wine text-sun" : "text-ash hover:bg-shell hover:text-ink"
+            data-active={active}
+            aria-current={active ? "page" : undefined}
+            className={`relative z-10 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors duration-200 ${
+              active ? "text-cream" : "text-ash hover:text-ink"
             }`}
           >
             {item.label}
+            {/* Sits in the pill's own padding, so showing it moves nothing. */}
+            <LinkSpinner className="absolute right-0.5 top-1/2 -translate-y-1/2" />
           </Link>
         );
       })}
-    </nav>
+    </div>
   );
 }
 
@@ -53,7 +97,7 @@ export function MobileNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-card sm:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-card/95 backdrop-blur sm:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="grid grid-cols-4">
@@ -64,21 +108,39 @@ export function MobileNav() {
             <Link
               key={item.href}
               href={item.href}
+              aria-current={active ? "page" : undefined}
               className="flex flex-col items-center gap-1 pb-2 pt-2.5 text-[11px] font-medium"
             >
               <span
-                className={`flex h-7 w-12 items-center justify-center rounded-full transition-colors ${
-                  active ? "bg-wine text-sun" : "text-ash"
+                className={`flex h-7 w-12 items-center justify-center rounded-full transition-all duration-200 ${
+                  active ? "scale-100 bg-pine text-cream" : "scale-95 text-mist"
                 }`}
               >
-                <Icon />
+                {/* The spinner takes the icon's place, so the bar never jumps. */}
+                <PendingIcon Icon={Icon} />
               </span>
-              <span className={active ? "text-wine" : "text-ash"}>{item.label}</span>
+              <span
+                className={`transition-colors duration-200 ${active ? "text-pine" : "text-mist"}`}
+              >
+                {item.label}
+              </span>
             </Link>
           );
         })}
       </div>
     </nav>
+  );
+}
+
+function PendingIcon({ Icon }: { Icon: () => React.JSX.Element }) {
+  const { pending } = useLinkStatus();
+  return pending ? (
+    <span
+      className="h-[15px] w-[15px] animate-spin rounded-full border-[1.5px] border-current border-t-transparent"
+      aria-label="Loading"
+    />
+  ) : (
+    <Icon />
   );
 }
 

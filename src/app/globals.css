@@ -3,10 +3,14 @@
 /* ==========================================================================
    Permail design tokens
 
-   Sunflare #F7B638 and Bloodwine #780115 stay the brand. Around them sits a
-   working palette: warm neutrals for surfaces, a deep moss for "this went
-   well", and pale washes so a screen can have depth without a single gradient.
-   Every fill in here is flat.
+   Pine #0E3B2E is the brand and every primary action. Sunflare #F7B638 is the
+   warm mark on dark grounds. Bloodwine #780115 has been demoted to a single
+   job — something went wrong — so a red thing on screen always means the same
+   thing. Moss stays for "this went well".
+
+   Around them, a cool-neutral surface scale: the app canvas is a hair off
+   white, cards are white, and hairlines do the dividing. Every fill is flat;
+   elevation is a soft shadow, never a gradient.
    ========================================================================== */
 
 @theme {
@@ -23,23 +27,24 @@
 
   /* --- positive state --- */
   --color-moss: #1f5d4c;
-  --color-moss-soft: #d5e5df;
+  --color-moss-soft: #cfe3db;
   --color-moss-pale: #eaf2ef;
 
   /* --- neutrals --- */
-  --color-ink: #17110f;
-  --color-ash: #6b5c5f;
-  --color-mist: #9d9092;
-  --color-line: #e9e0d6;
-  --color-paper: #fbf7f1;
-  --color-shell: #f5efe6;
+  --color-ink: #121110;
+  --color-ash: #57534e;
+  --color-mist: #8c8781;
+  --color-line: #e8e5e0;
+  --color-paper: #f7f6f3;  /* app canvas */
+  --color-shell: #f1efeb;  /* table heads, insets */
   --color-card: #ffffff;
 
-  --font-display: var(--ff-display), "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: var(--ff-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* One face across the product and the public site. */
+  --font-display: var(--ff-grotesk), "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--ff-grotesk), "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: var(--ff-mono), ui-monospace, "SF Mono", monospace;
 
-  --radius-card: 16px;
+  --radius-card: 10px;
 }
 
 @layer base {
@@ -62,7 +67,7 @@
 
   ::selection {
     background: var(--color-sun);
-    color: var(--color-wine);
+    color: var(--color-pine-deep);
   }
 
   h1, h2, h3 {
@@ -76,8 +81,9 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-wine);
+    outline: 2px solid var(--color-pine);
     outline-offset: 2px;
+    border-radius: 4px;
   }
 }
 
@@ -89,18 +95,33 @@
     border-radius: var(--radius-card);
   }
 
-  /* The signature flourish: a solid offset edge. Flat, never a soft shadow. */
-  .edge      { box-shadow: 4px 4px 0 0 var(--color-ink); }
-  .edge-sun  { box-shadow: 4px 4px 0 0 var(--color-sun); }
-  .edge-wine { box-shadow: 4px 4px 0 0 var(--color-wine); }
+  /* Low, soft elevation. Kept under the old class names so every surface in
+     the product moved at once. */
+  .edge      { box-shadow: 0 1px 2px rgb(18 17 16 / 0.05), 0 10px 26px -14px rgb(18 17 16 / 0.2); }
+  .edge-sun  { box-shadow: 0 1px 2px rgb(18 17 16 / 0.05), 0 10px 26px -14px rgb(14 59 46 / 0.34); }
+  .edge-wine { box-shadow: 0 1px 2px rgb(18 17 16 / 0.05), 0 10px 26px -14px rgb(120 1 21 / 0.3); }
 
   .lift {
-    transition: transform 0.14s ease, border-color 0.14s ease;
+    transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1),
+      border-color 0.16s ease, box-shadow 0.16s ease;
   }
   .lift:hover {
     transform: translateY(-2px);
-    border-color: var(--color-wine);
+    border-color: var(--color-pine);
+    box-shadow: 0 1px 2px rgb(18 17 16 / 0.04), 0 12px 28px -16px rgb(14 59 46 / 0.32);
   }
+  .lift:active { transform: translateY(0); }
+
+  /* Anything clickable that is not a button: rows, cards, list items. */
+  .tap {
+    transition: background-color 0.14s ease, border-color 0.14s ease, transform 0.14s ease;
+  }
+  .tap:hover { border-color: var(--color-pine); background: var(--color-card); }
+  .tap:active { transform: scale(0.995); }
+
+  /* The chevron that slides on hover. */
+  .nudge { transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .group:hover .nudge { transform: translateX(3px); }
 
   /* --- buttons ---------------------------------------------------------- */
   .btn {
@@ -110,9 +131,9 @@
     gap: 0.5rem;
     height: 2.75rem;
     padding: 0 1.15rem;
-    border-radius: 999px;
+    border-radius: 8px;
     font-size: 0.9375rem;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: -0.01em;
     white-space: nowrap;
     cursor: pointer;
@@ -124,25 +145,39 @@
   .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
   .btn-primary {
-    background: var(--color-wine);
-    color: var(--color-sun);
-    border: 1px solid var(--color-wine);
+    background: var(--color-pine);
+    color: var(--color-cream);
+    border: 1px solid var(--color-pine);
   }
-  .btn-primary:hover:not(:disabled) { background: var(--color-wine-deep); }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-pine-deep);
+    border-color: var(--color-pine-deep);
+  }
 
   .btn-sun {
     background: var(--color-sun);
-    color: var(--color-wine);
-    border: 1px solid var(--color-wine);
+    color: var(--color-pine-deep);
+    border: 1px solid var(--color-sun);
   }
-  .btn-sun:hover:not(:disabled) { background: var(--color-sun-dim); }
+  .btn-sun:hover:not(:disabled) { background: var(--color-sun-dim); border-color: var(--color-sun-dim); }
 
   .btn-ghost {
     background: var(--color-card);
     color: var(--color-ink);
     border: 1px solid var(--color-line);
   }
-  .btn-ghost:hover:not(:disabled) { border-color: var(--color-ink); }
+  .btn-ghost:hover:not(:disabled) {
+    border-color: var(--color-pine);
+    color: var(--color-pine);
+  }
+
+  /* Destructive, and the only red button in the product. */
+  .btn-danger {
+    background: var(--color-card);
+    color: var(--color-wine);
+    border: 1px solid var(--color-wine-soft);
+  }
+  .btn-danger:hover:not(:disabled) { background: var(--color-wine-pale); border-color: var(--color-wine); }
 
   .btn-sm { height: 2.25rem; padding: 0 0.85rem; font-size: 0.875rem; }
   .btn-lg { height: 3.25rem; padding: 0 1.5rem; font-size: 1rem; }
@@ -158,7 +193,11 @@
     transition: border-color 0.12s ease;
   }
   .field::placeholder { color: var(--color-mist); }
-  .field:focus { outline: none; border-color: var(--color-wine); }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-pine);
+    box-shadow: 0 0 0 3px rgb(14 59 46 / 0.1);
+  }
 
   .label {
     display: block;
@@ -178,10 +217,10 @@
     font-family: var(--font-mono);
     font-size: 0.75rem;
     padding: 0.2rem 0.55rem;
-    border-radius: 999px;
-    background: var(--color-sun-pale);
-    color: var(--color-wine);
-    border: 1px solid var(--color-sun-soft);
+    border-radius: 6px;
+    background: rgb(14 59 46 / 0.06);
+    color: var(--color-pine);
+    border: 1px solid rgb(14 59 46 / 0.14);
     white-space: nowrap;
   }
 
@@ -202,7 +241,7 @@
   .meter > span {
     display: block;
     height: 100%;
-    background: var(--color-wine);
+    background: var(--color-pine);
     transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
@@ -210,9 +249,9 @@
   .guide-body code {
     font-family: var(--font-mono);
     font-size: 0.85em;
-    background: var(--color-sun-pale);
-    border: 1px solid var(--color-sun-soft);
-    color: var(--color-wine);
+    background: rgb(14 59 46 / 0.06);
+    border: 1px solid rgb(14 59 46 / 0.14);
+    color: var(--color-pine);
     padding: 0.1em 0.4em;
     border-radius: 6px;
     white-space: nowrap;
@@ -225,7 +264,7 @@
     margin-bottom: 0.6rem;
   }
   .guide-body li::marker {
-    color: var(--color-sun-dim);
+    color: var(--color-pine);
   }
   .guide-body strong {
     color: var(--color-ink);
@@ -242,6 +281,47 @@
   to   { opacity: 1; transform: none; }
 }
 .rise { animation: permail-rise 0.35s ease both; }
+
+/* Entrance for a group of cards — each child sets its own --i for the stagger. */
+@keyframes permail-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.enter {
+  animation: permail-enter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+
+/* The setup ring drawing itself in on first paint. */
+@keyframes permail-draw {
+  from { stroke-dashoffset: var(--circumference); }
+}
+.draw {
+  animation: permail-draw 0.9s cubic-bezier(0.3, 0.9, 0.3, 1) both;
+  animation-delay: 0.15s;
+}
+
+/* Placeholder shapes while a route loads.
+
+   The fill is a flat, clearly visible grey — a wash barely darker than the
+   canvas reads as a rendering fault rather than a placeholder — with a single
+   light band travelling across it. */
+@keyframes permail-shimmer {
+  from { background-position: 150% 0; }
+  to   { background-position: -150% 0; }
+}
+.shimmer {
+  background-color: var(--color-line);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.7) 50%,
+    transparent 100%
+  );
+  background-size: 60% 100%;
+  background-repeat: no-repeat;
+  animation: permail-shimmer 1.5s ease-in-out infinite;
+}
 
 @keyframes permail-pop {
   0%   { transform: scale(0.9); opacity: 0; }
@@ -269,12 +349,64 @@
   animation: pm-travel 4.2s linear infinite;
 }
 
+/* ==========================================================================
+   The three accessibility signals
+
+   Each is a separate preference and they are not interchangeable: someone can
+   want motion gone but translucency kept, or the reverse. All three are
+   answered here rather than per component, so a new surface inherits the
+   right behaviour by default.
+   ========================================================================== */
+
+/*
+   Reduced motion is not "no feedback" — it is feedback that does not move
+   anything across the field of view. So travel, parallax, drift and overshoot
+   all go; fades, colour changes and the press state stay, because those are
+   what tell the reader something responded.
+*/
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+
+  /* Looping and travelling decoration earns nothing here. */
+  .drift, .travel, .shimmer, .rise, .enter, .pop, .draw {
+    animation: none !important;
   }
+
+  *, *::before, *::after {
+    /* Everything positional is dropped; the legible properties survive. */
+    transition-property: opacity, color, background-color, border-color, box-shadow,
+      text-decoration-color, outline-color !important;
+    transition-duration: 180ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/*
+   Translucency is the first thing to go for anyone who finds blurred layers
+   hard to read: the material becomes an opaque surface and keeps doing its
+   real job, which is separating chrome from content.
+*/
+@media (prefers-reduced-transparency: reduce) {
+  .glass-chrome {
+    background: var(--color-pine);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* High contrast wants near-solid grounds and a border that is actually there. */
+@media (prefers-contrast: more) {
+  .glass-chrome {
+    background: var(--color-pine);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: 1px solid var(--color-cream);
+  }
+  .glass-chrome::after { display: none; }
+  .mbtn-onpine { border-color: var(--color-cream); }
+  .mbtn-line { border-color: var(--color-graphite); }
+  .type-meta, .kicker { color: var(--color-slate); }
 }
 
 /* ==========================================================================
@@ -329,6 +461,104 @@
   /* The one highlighted phrase per headline, as in the reference. */
   .display .accent { color: var(--color-wine); }
 
+  /* --- the optical scale ------------------------------------------------- */
+  /*
+     Type is not one setting scaled up and down. As a face grows, the letters
+     drift apart and the lines want to close up; as it shrinks, the opposite.
+     So size, tracking and leading are set together, as tiers, and nothing on
+     the page sets a size without the tracking that belongs to it.
+
+     The direction of travel: tracking goes from -0.042em at the top of the
+     scale to *positive* at the bottom, and leading runs the other way, 0.98
+     up top to 1.72 in body copy.
+  */
+  .type-hero,
+  .type-display,
+  .type-title,
+  .type-quote,
+  .type-wordmark {
+    font-family: var(--font-grotesk);
+    font-weight: 500;
+    color: var(--color-graphite);
+    font-variant-numeric: tabular-nums;
+    font-optical-sizing: auto;
+    text-wrap: balance;
+  }
+
+  .type-hero {
+    font-size: clamp(2.4rem, 5.2vw, 4rem);
+    letter-spacing: -0.042em;
+    line-height: 0.98;
+  }
+  .type-display {
+    font-size: clamp(1.95rem, 3.6vw, 2.9rem);
+    letter-spacing: -0.034em;
+    line-height: 1.05;
+  }
+  .type-title {
+    font-size: clamp(1.55rem, 2.6vw, 2.1rem);
+    letter-spacing: -0.025em;
+    line-height: 1.12;
+  }
+  .type-quote {
+    font-size: clamp(1.35rem, 2.4vw, 1.95rem);
+    letter-spacing: -0.018em;
+    line-height: 1.3;
+  }
+  .type-wordmark {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+
+  /* Reading sizes. Leading opens up as the size comes down. */
+  .type-lead {
+    font-size: clamp(1rem, 1.05vw, 1.1rem);
+    letter-spacing: -0.004em;
+    line-height: 1.68;
+    text-wrap: pretty;
+  }
+  .type-body {
+    font-size: 0.9375rem;
+    letter-spacing: 0;
+    line-height: 1.72;
+    text-wrap: pretty;
+  }
+  /* Small text needs tracking *added* back, not taken away. */
+  .type-meta {
+    font-size: 0.8125rem;
+    letter-spacing: 0.004em;
+    line-height: 1.6;
+  }
+
+  /* The accent phrase, available to every tier. */
+  .type-hero .accent,
+  .type-display .accent,
+  .type-title .accent,
+  .type-quote .accent {
+    color: var(--color-wine);
+  }
+
+  /* --- response ---------------------------------------------------------- */
+  /*
+     Feedback belongs on the press, not the release. Waiting for `click` to
+     acknowledge a tap is the single cheapest way to make an interface feel
+     dead, and 110ms is short enough to read as the surface giving rather than
+     as an animation playing.
+
+     inline-flex is here so this works on anchors too — a plain inline element
+     cannot be transformed.
+  */
+  .press {
+    display: inline-flex;
+    align-items: center;
+    transition: transform 110ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      color 160ms ease, border-color 160ms ease, background-color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+  .press:active { transform: scale(0.97); }
+
   .kicker {
     font-family: var(--font-mono);
     font-size: 0.6875rem;
@@ -357,10 +587,13 @@
     white-space: nowrap;
     cursor: pointer;
     border: 1px solid transparent;
-    transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease,
+    transition: transform 110ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease,
       opacity 0.18s ease;
   }
   .mbtn:disabled { opacity: 0.5; cursor: not-allowed; }
+  /* The button gives under the finger, the instant it is touched. */
+  .mbtn:active:not(:disabled) { transform: scale(0.97); }
 
   .mbtn-wine {
     background: var(--color-wine);
@@ -404,6 +637,39 @@
   }
   .mlink:hover { text-decoration-color: var(--color-wine); }
 
+  /* --- the header material ---------------------------------------------- */
+  /*
+     At rest this is not glass at all — it is the hero's own green, flat.
+     That is deliberate and it is a layout fact rather than a taste: the header
+     is `sticky`, so at the top of the page it occupies its own band *above*
+     the hero rather than floating over it. Anything translucent there reveals
+     the white page ground behind, and cream text on white is unreadable.
+     Matching --color-pine exactly means the band and the hero below it read as
+     one uninterrupted surface.
+
+     It only becomes a material once there is something to be a material over:
+     the scroll-driven rules further down turn it to glass as content slides
+     underneath. The rest state being the opaque one is also what makes this
+     safe in browsers without scroll-timeline support, and on any visit where
+     the stylesheet arrives but nothing else does.
+  */
+  .glass-chrome {
+    background: var(--color-pine);
+    border-top: 1px solid rgb(246 245 241 / 0);
+  }
+
+  /* The scroll edge: a short fade where content tucks under, not a hairline. */
+  .glass-chrome::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    height: 20px;
+    opacity: 0;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgb(10 44 34 / 0.35), transparent);
+  }
+
   /* --- figure bed ------------------------------------------------------- */
   .figure-bed {
     position: relative;
@@ -413,6 +679,93 @@
 
   /* Corner ticks, so an unfilled slot reads as a crop mark and not a fault. */
   .tick { position: absolute; width: 12px; height: 12px; border-color: var(--color-stone); opacity: 0.4; }
+}
+
+/* ==========================================================================
+   Scroll-driven motion, in CSS
+
+   Neither of the effects below is something the reader touches — one tracks
+   the scrollbar, the other reacts to a section arriving — so neither needs a
+   spring, and neither is worth shipping JavaScript for. Done in CSS they also
+   fail in the right direction: the un-animated state is the *finished* state,
+   so a browser without scroll-timeline support, or a visit where the bundle
+   never loads, shows a complete page rather than a blank one.
+
+   This is the opposite of how the hero's letter deck is built, and for a good
+   reason: that one is a gesture, and a gesture needs to be interruptible and
+   velocity-aware, which only a real spring can do.
+   ========================================================================== */
+
+@keyframes pm-reveal {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/*
+   Flat green at the top of the page, glass once content is under it. Running
+   this way round — rather than fading *in* from transparent — is what keeps
+   the header legible before the first scroll, when it sits on the white page
+   ground rather than over the hero.
+*/
+@keyframes pm-chrome-glass {
+  from {
+    background: var(--color-pine);
+    backdrop-filter: blur(0px) saturate(100%);
+    -webkit-backdrop-filter: blur(0px) saturate(100%);
+    border-top-color: rgb(246 245 241 / 0);
+  }
+  to {
+    background: rgb(10 44 34 / 0.72);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border-top-color: rgb(246 245 241 / 0.1);
+  }
+}
+
+@keyframes pm-edge-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/*
+   All three preferences gate this. Reduced motion is the obvious one; reduced
+   transparency and high contrast matter too, because the animation sets
+   `background` and `backdrop-filter`, and an animation's computed value would
+   otherwise win over the solid overrides further down.
+*/
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Sections arrive as you reach them. 14px of travel, no overshoot. */
+    .reveal {
+      animation: pm-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 8% entry 80%;
+    }
+    /*
+       The second half of a pair. The stagger is a shifted scroll range rather
+       than a delay in seconds, so it stays tied to where the reader actually
+       is — scroll back up and it unwinds, which a timed delay cannot do.
+    */
+    .reveal-late {
+      animation-range: entry 16% entry 92%;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) and
+         (prefers-reduced-transparency: no-preference) and
+         (prefers-contrast: no-preference) {
+    /* The header turns to glass once content is actually under it. */
+    .glass-chrome {
+      animation: pm-chrome-glass linear both;
+      animation-timeline: scroll();
+      animation-range: 0 72px;
+    }
+    .glass-chrome::after {
+      animation: pm-edge-in linear both;
+      animation-timeline: scroll();
+      animation-range: 0 72px;
+    }
+  }
 }
 
 /* The app keeps the warm paper; the public site overscrolls into white. */

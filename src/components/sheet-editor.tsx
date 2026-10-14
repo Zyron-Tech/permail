@@ -261,11 +261,11 @@ export function SheetEditor({
       </div>
 
       {message ? (
-        <p className="card mb-4 border-wine bg-wine-soft px-3.5 py-2.5 text-sm text-wine">{message}</p>
+        <p className="card mb-4 border-wine/25 bg-wine-pale px-3.5 py-2.5 text-sm text-wine">{message}</p>
       ) : null}
 
       {(stats.invalid.length > 0 || stats.duplicates.length > 0) && (
-        <p className="card mb-4 border-sun bg-sun-soft px-3.5 py-2.5 text-sm text-wine">
+        <p className="card mb-4 border-sun bg-sun-soft px-3.5 py-2.5 text-sm text-pine">
           {[
             stats.invalid.length > 0 &&
               `${stats.invalid.length} address${stats.invalid.length === 1 ? " doesn't" : "es don't"} look valid`,
@@ -285,21 +285,21 @@ export function SheetEditor({
             <thead>
               <tr className="border-b border-line bg-paper">
                 <th className="w-9" />
-                <th className="min-w-[220px] px-3 py-2 text-left font-mono text-xs font-medium text-wine">
+                <th className="min-w-[220px] px-3 py-2 text-left font-mono text-xs font-medium text-pine">
                   email
                 </th>
                 {fields.map((field) => (
                   <th key={field} className="min-w-[160px] px-3 py-2 text-left">
                     <span className="flex items-center gap-1.5">
                       <button
-                        className="font-mono text-xs font-medium text-wine hover:underline"
+                        className="font-mono text-xs font-medium text-pine hover:underline"
                         onClick={() => renameField(field)}
                         title="Rename column"
                       >
                         {field}
                       </button>
                       <button
-                        className="text-ash transition-colors hover:text-wine"
+                        className="text-ash transition-colors hover:text-pine"
                         onClick={() => removeField(field)}
                         title="Remove column"
                         aria-label={`Remove ${field}`}
@@ -310,7 +310,7 @@ export function SheetEditor({
                   </th>
                 ))}
                 <th className="w-10 px-2">
-                  <button className="text-lg text-ash hover:text-wine" onClick={addField} title="Add column">
+                  <button className="text-lg text-ash hover:text-pine" onClick={addField} title="Add column">
                     +
                   </button>
                 </th>
@@ -346,7 +346,7 @@ export function SheetEditor({
                     ))}
                     <td className="px-2 text-center">
                       <button
-                        className="text-ash transition-colors hover:text-wine"
+                        className="text-ash transition-colors hover:text-pine"
                         onClick={() => removeRow(row.key)}
                         aria-label={`Remove row ${rowIndex + 1}`}
                       >
@@ -361,7 +361,7 @@ export function SheetEditor({
         </div>
 
         <button
-          className="w-full border-t border-line py-2.5 text-sm font-medium text-ash transition-colors hover:bg-paper hover:text-wine"
+          className="w-full border-t border-line py-2.5 text-sm font-medium text-ash transition-colors hover:bg-paper hover:text-pine"
           onClick={addRow}
         >
           + Add row

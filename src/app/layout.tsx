@@ -3,18 +3,13 @@ import localFont from "next/font/local";
 import "./globals.css";
 
 /**
- * Fonts are self-hosted (latin variable subsets, ~100 KB total) rather than
- * pulled from Google at build time. Builds stay hermetic and offline-capable,
- * and there is no third-party request on page load.
+ * Fonts are self-hosted (latin variable subsets) rather than pulled from Google
+ * at build time. Builds stay hermetic and offline-capable, and there is no
+ * third-party request on page load.
+ *
+ * Geist sets everything — the product and the public site — with Inter left as
+ * the metric-compatible fallback and JetBrains Mono for labels and numerals.
  */
-const display = localFont({
-  src: "./fonts/SpaceGrotesk.woff2",
-  variable: "--ff-display",
-  weight: "500 700",
-  display: "swap",
-  fallback: ["ui-sans-serif", "system-ui", "sans-serif"],
-});
-
 const sans = localFont({
   src: "./fonts/Inter.woff2",
   variable: "--ff-sans",
@@ -54,7 +49,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable} ${grotesk.variable} ${mono.variable}`}>
+    <html lang="en" className={`${sans.variable} ${grotesk.variable} ${mono.variable}`}>
       <body>{children}</body>
     </html>
   );

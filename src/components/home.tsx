@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { milestone, formatCount, plural, type Step } from "@/lib/progress";
 
 /** A ring instead of a bar — it reads as "a thing to complete", not a loading state. */
@@ -18,16 +21,20 @@ export function Ring({ done, total, size = 56 }: { done: number; total: number; 
         stroke="var(--color-line)"
         strokeWidth={stroke}
       />
+      {/* Drawn as one dash so it can animate in from empty on first paint. */}
       <circle
         cx={size / 2}
         cy={size / 2}
         r={radius}
         fill="none"
-        stroke="var(--color-wine)"
+        stroke="var(--color-pine)"
         strokeWidth={stroke}
         strokeLinecap="round"
-        strokeDasharray={`${filled} ${circumference}`}
+        strokeDasharray={circumference}
+        strokeDashoffset={circumference - filled}
         transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        className="draw"
+        style={{ ["--circumference" as string]: circumference }}
       />
       <text
         x="50%"
@@ -56,11 +63,11 @@ export function SetupPath({ steps }: { steps: Step[] }) {
   const current = steps.find((step) => !step.done);
 
   return (
-    <section className="card edge-sun mb-6 overflow-hidden">
+    <section className="card enter mb-6 overflow-hidden">
       <div className="flex items-center gap-4 border-b border-line px-4 py-4 sm:px-5">
         <Ring done={done} total={steps.length} />
         <div className="min-w-0">
-          <h2 className="font-display text-lg font-bold tracking-tight text-ink sm:text-xl">
+          <h2 className="font-display text-lg font-semibold tracking-tight text-ink sm:text-xl">
             {HEADINGS[done] ?? HEADINGS[0]}
           </h2>
           <p className="mt-0.5 text-sm text-ash">
@@ -76,16 +83,16 @@ export function SetupPath({ steps }: { steps: Step[] }) {
           return (
             <li
               key={step.key}
-              className={`flex items-start gap-3.5 border-b border-line px-4 py-4 last:border-0 sm:px-5 ${
-                isCurrent ? "bg-sun-pale" : ""
+              className={`flex items-start gap-3.5 border-b border-line px-4 py-4 transition-colors last:border-0 sm:px-5 ${
+                isCurrent ? "bg-pine/[0.035]" : ""
               }`}
             >
               <span
-                className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border font-mono text-[11px] ${
+                className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border font-mono text-[11px] transition-colors ${
                   step.done
                     ? "border-moss bg-moss text-white"
                     : isCurrent
-                      ? "border-wine bg-wine text-sun"
+                      ? "border-pine bg-pine text-cream"
                       : "border-line bg-card text-mist"
                 }`}
               >
@@ -94,7 +101,7 @@ export function SetupPath({ steps }: { steps: Step[] }) {
 
               <div className="min-w-0 flex-1">
                 <p
-                  className={`font-semibold ${step.done ? "text-mist line-through decoration-1" : "text-ink"}`}
+                  className={`font-medium ${step.done ? "text-mist line-through decoration-1" : "text-ink"}`}
                 >
                   {step.title}
                 </p>
@@ -118,6 +125,7 @@ export function SetupPath({ steps }: { steps: Step[] }) {
 
 export function MilestoneBar({ totalSent }: { totalSent: number }) {
   const { next, progress } = milestone(totalSent);
+  const width = useGrow(next === null ? 100 : progress);
 
   if (next === null) {
     return (
@@ -130,40 +138,82 @@ export function MilestoneBar({ totalSent }: { totalSent: number }) {
   return (
     <div>
       <div className="mb-2 flex items-baseline justify-between gap-3">
-        <p className="font-mono text-xs text-ash">
-          {formatCount(next - totalSent)} to go
-        </p>
-        <p className="font-mono text-xs text-ash">next mark · {formatCount(next)}</p>
+        <p className="font-mono text-xs text-ash">{formatCount(next - totalSent)} to go</p>
+        <p className="font-mono text-xs text-mist">next mark · {formatCount(next)}</p>
       </div>
       <div className="meter">
-        <span style={{ width: `${progress}%` }} />
+        <span style={{ width: `${width}%` }} />
       </div>
     </div>
   );
 }
 
+/**
+ * Numbers arrive by counting up rather than appearing. It is a small thing, but
+ * it is the difference between a figure and a result. Strings (an em dash, a
+ * multiplier) are rendered as they are.
+ */
 export function StatTile({
   value,
   label,
   tone = "plain",
 }: {
-  value: string;
+  value: number | string;
   label: string;
-  tone?: "plain" | "sun" | "wine" | "moss";
+  tone?: "plain" | "sun" | "pine" | "moss";
 }) {
   const tones = {
     plain: "bg-card border-line text-ink",
-    sun: "bg-sun border-wine text-wine",
-    wine: "bg-wine border-wine text-sun",
+    sun: "bg-sun-pale border-sun-soft text-pine-deep",
+    pine: "bg-pine border-pine text-cream",
     moss: "bg-moss-pale border-moss-soft text-moss",
   } as const;
 
+  const counted = useCountUp(typeof value === "number" ? value : null);
+
   return (
-    <div className={`rounded-[16px] border p-4 ${tones[tone]}`}>
-      <p className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{value}</p>
-      <p className="mt-1 text-[13px] leading-snug opacity-80">{label}</p>
+    <div className={`enter rounded-[10px] border p-4 ${tones[tone]}`}>
+      <p className="font-display text-2xl font-semibold tracking-tight tabular-nums sm:text-3xl">
+        {typeof value === "number" ? formatCount(counted) : value}
+      </p>
+      <p className="mt-1 text-[13px] leading-snug opacity-75">{label}</p>
     </div>
   );
+}
+
+/** Ease-out count from zero, skipped entirely when motion is unwelcome. */
+function useCountUp(target: number | null, duration = 900): number {
+  const [value, setValue] = useState(target ?? 0);
+  const frame = useRef(0);
+
+  useEffect(() => {
+    if (target === null) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || target === 0) {
+      setValue(target);
+      return;
+    }
+
+    const started = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min((now - started) / duration, 1);
+      setValue(Math.round(target * (1 - Math.pow(1 - t, 3))));
+      if (t < 1) frame.current = requestAnimationFrame(tick);
+    };
+    frame.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame.current);
+  }, [target, duration]);
+
+  return value;
+}
+
+/** Lets the meter transition from 0 on mount instead of snapping to width. */
+function useGrow(target: number): number {
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setWidth(target));
+    return () => cancelAnimationFrame(id);
+  }, [target]);
+  return width;
 }
 
 function Check() {

@@ -10,15 +10,13 @@ export function SetupNotice() {
 
   return (
     <main className="mx-auto min-h-dvh max-w-2xl px-5 py-16">
-      <div className="mb-8 flex items-center gap-2">
-        <span className="flex h-7 w-7 items-center justify-center rounded-md bg-wine font-display text-sm font-bold text-sun">
-          P
-        </span>
-        <span className="font-display text-lg font-bold tracking-tight text-ink">permail</span>
+      <div className="mb-8 flex items-baseline gap-[3px]">
+        <span className="font-display text-lg font-semibold tracking-[-0.045em] text-ink">Permail</span>
+        <span className="h-[4px] w-[4px] rounded-full bg-sun" />
       </div>
 
-      <p className="eyebrow mb-4 text-wine">[00] &nbsp; One-time setup</p>
-      <h1 className="text-4xl font-bold leading-tight text-ink">
+      <p className="eyebrow mb-4 text-mist">One-time setup</p>
+      <h1 className="text-4xl font-semibold leading-tight text-ink">
         Permail needs its keys before it can run.
       </h1>
 
@@ -35,7 +33,7 @@ export function SetupNotice() {
             return (
               <li key={name} className="flex items-center gap-2.5">
                 <span
-                  className={`h-1.5 w-1.5 shrink-0 rounded-full ${missing ? "bg-wine" : "bg-sun"}`}
+                  className={`h-1.5 w-1.5 shrink-0 rounded-full ${missing ? "bg-wine" : "bg-moss"}`}
                 />
                 <code className="font-mono text-[13px] text-ink">{name}</code>
                 <span className="ml-auto font-mono text-[11px] uppercase tracking-wider text-ash">

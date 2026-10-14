@@ -137,7 +137,7 @@ export function Composer({
         onChange={(e) => setName(e.target.value)}
         placeholder="Untitled campaign"
         spellCheck={false}
-        className="-ml-2 mb-1 w-full rounded-lg border border-transparent bg-transparent px-2 py-1 font-display text-3xl font-bold tracking-tight text-ink outline-none transition-colors hover:border-line focus:border-wine focus:bg-card sm:text-4xl"
+        className="-ml-2 mb-1 w-full rounded-lg border border-transparent bg-transparent px-2 py-1 font-display text-3xl font-semibold tracking-tight text-ink outline-none transition-colors hover:border-line focus:border-pine focus:bg-card sm:text-4xl"
       />
       <p className="mb-6 pl-0.5 font-mono text-xs text-ash">
         {saveState === "saving" ? "saving…" : saveState === "error" ? "save failed" : "draft · saved"}
@@ -199,7 +199,7 @@ export function Composer({
             key={value}
             onClick={() => setTab(value)}
             className={`rounded-full py-2 text-sm font-semibold capitalize transition-colors ${
-              tab === value ? "bg-wine text-sun" : "text-ash"
+              tab === value ? "bg-pine text-cream" : "text-ash"
             }`}
           >
             {value}
@@ -289,7 +289,7 @@ export function Composer({
               {rows.length > 1 ? (
                 <div className="ml-auto flex items-center gap-1">
                   <button
-                    className="btn btn-ghost btn-sm h-7 w-7 !p-0"
+                    className="btn btn-ghost btn-sm h-7 w-7 p-0"
                     onClick={() => setPreviewIndex((i) => Math.max(0, i - 1))}
                     disabled={safeIndex === 0}
                     aria-label="Previous recipient"
@@ -300,7 +300,7 @@ export function Composer({
                     {safeIndex + 1}/{rows.length}
                   </span>
                   <button
-                    className="btn btn-ghost btn-sm h-7 w-7 !p-0"
+                    className="btn btn-ghost btn-sm h-7 w-7 p-0"
                     onClick={() => setPreviewIndex((i) => Math.min(rows.length - 1, i + 1))}
                     disabled={safeIndex >= rows.length - 1}
                     aria-label="Next recipient"
@@ -327,7 +327,7 @@ export function Composer({
           </div>
 
           {checks.blanks.length > 0 ? (
-            <p className="card mt-4 border-sun bg-sun-soft px-3.5 py-2.5 text-sm text-wine">
+            <p className="card mt-4 border-sun bg-sun-soft px-3.5 py-2.5 text-sm text-pine">
               {checks.blanks.length} {checks.blanks.length === 1 ? "recipient is" : "recipients are"}{" "}
               missing a value — those tags will render empty. Add a fallback like{" "}
               <code className="font-mono">{"{{company|your team}}"}</code>.
@@ -425,7 +425,7 @@ function SendDialog({
       <div className="card w-full max-w-md rounded-b-none p-5 sm:rounded-b-[14px]">
         {!progress && !error ? (
           <>
-            <h2 className="font-display text-xl font-bold text-ink">
+            <h2 className="font-display text-xl font-semibold text-ink">
               Send to {count} {count === 1 ? "person" : "people"}?
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-ash">
@@ -451,7 +451,7 @@ function SendDialog({
           </>
         ) : (
           <>
-            <h2 className="font-display text-xl font-bold text-ink">
+            <h2 className="font-display text-xl font-semibold text-ink">
               {error ? "Sending stopped" : done ? "Done" : "Sending…"}
             </h2>
 
@@ -459,7 +459,7 @@ function SendDialog({
               <>
                 <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-line">
                   <div
-                    className="h-full bg-wine transition-all duration-300"
+                    className="h-full bg-pine transition-all duration-300"
                     style={{
                       width: `${Math.round(((progress.sent + progress.failed) / Math.max(1, progress.total)) * 100)}%`,
                     }}

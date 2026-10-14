@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createAudience } from "@/lib/actions";
 import { PageHeader, EmptyState, formatWhen } from "@/components/ui";
+import { NoAudiencesArt } from "@/components/app-art";
 import type { Audience } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -39,13 +40,14 @@ export default async function AudiencesPage() {
         title="Your people"
         action={
           <form action={createAudience}>
-            <button className="btn btn-primary edge-sun">New audience</button>
+            <button className="btn btn-primary">New audience</button>
           </form>
         }
       />
 
       {list.length === 0 ? (
         <EmptyState
+          art={<NoAudiencesArt className="w-full" />}
           title="No audiences yet"
           body="An audience is a sheet: one row per person, one column per detail you want to drop into the message."
         >
@@ -55,13 +57,14 @@ export default async function AudiencesPage() {
         </EmptyState>
       ) : (
         <ul className="grid gap-2.5 sm:grid-cols-2">
-          {list.map((audience) => (
+          {list.map((audience, index) => (
             <li key={audience.id}>
               <Link
                 href={`/app/audiences/${audience.id}`}
-                className="card flex h-full flex-col p-4 transition-colors hover:border-wine"
+                className="card tap enter flex h-full flex-col p-4"
+                style={{ ["--i" as string]: index }}
               >
-                <p className="font-display text-lg font-semibold tracking-tight text-ink">
+                <p className="font-display text-[17px] font-semibold tracking-tight text-ink">
                   {audience.name}
                 </p>
                 <p className="mt-0.5 font-mono text-xs text-ash">

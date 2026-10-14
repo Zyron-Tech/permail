@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createCampaign } from "@/lib/actions";
 import { StatusPill, formatWhen } from "@/components/ui";
 import { SetupPath, MilestoneBar, StatTile } from "@/components/home";
+import { FanMark } from "@/components/app-art";
 import { buildSteps, greeting, formatCount, plural } from "@/lib/progress";
 import { extractTokens } from "@/lib/merge";
 import type { Campaign } from "@/lib/types";
@@ -58,24 +59,32 @@ export default async function HomePage() {
 
   return (
     <>
-      <header className="mb-6">
-        <p className="eyebrow mb-2 text-wine">{greeting()}</p>
-        <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-          {firstName ? `Hello, ${firstName}.` : "Hello."}
-        </h1>
-        <p className="mt-2 max-w-lg leading-relaxed text-ash">
-          {setupComplete
-            ? "Everything's wired up. Write something worth reading."
-            : "Four short steps and your first personalised send is out the door."}
-        </p>
+      <header className="enter mb-7 flex items-start justify-between gap-6">
+        <div className="min-w-0">
+          <p className="eyebrow mb-2 text-mist">{greeting()}</p>
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-[2.35rem]">
+            {firstName ? `Hello, ${firstName}.` : "Hello."}
+          </h1>
+          <p className="mt-2 max-w-lg leading-relaxed text-ash">
+            {setupComplete
+              ? "Everything's wired up. Write something worth reading."
+              : "Four short steps and your first personalised send is out the door."}
+          </p>
+        </div>
+
+        <FanMark className="hidden w-[190px] shrink-0 sm:block" />
       </header>
 
       {setupComplete ? (
         <section className="mb-6">
           <div className="mb-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-            <StatTile value={formatCount(totalSent)} label="emails personalised" tone="wine" />
-            <StatTile value={formatCount(sent.length)} label={plural(sent.length, "campaign sent", "campaigns sent")} tone="sun" />
-            <StatTile value={formatCount(contactCount)} label="people on your lists" />
+            <StatTile value={totalSent} label="emails personalised" tone="pine" />
+            <StatTile
+              value={sent.length}
+              label={plural(sent.length, "campaign sent", "campaigns sent")}
+              tone="sun"
+            />
+            <StatTile value={contactCount} label="people on your lists" />
             <StatTile value={depth ? `${depth}×` : "—"} label="avg merge tags per send" tone="moss" />
           </div>
           <div className="card px-4 py-3.5">
@@ -89,25 +98,30 @@ export default async function HomePage() {
       {/* quick actions */}
       <section className="mb-6 grid gap-2.5 sm:grid-cols-2">
         <form action={createCampaign}>
-          <button className="card lift flex w-full items-center gap-4 p-4 text-left">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-wine text-sun">
+          <button className="card lift group enter flex w-full items-center gap-4 p-4 text-left">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[9px] bg-pine text-cream">
               <PenIcon />
             </span>
-            <span className="min-w-0">
-              <span className="block font-display text-base font-bold tracking-tight text-ink">
+            <span className="min-w-0 flex-1">
+              <span className="block font-display text-[15px] font-semibold tracking-tight text-ink">
                 Write a campaign
               </span>
-              <span className="block text-sm text-ash">One draft, everyone's name in it.</span>
+              <span className="block text-sm text-ash">One draft, everyone&apos;s name in it.</span>
             </span>
+            <Arrow />
           </button>
         </form>
 
-        <Link href="/app/audiences" className="card lift flex items-center gap-4 p-4">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-sun text-wine">
+        <Link
+          href="/app/audiences"
+          className="card lift group enter flex items-center gap-4 p-4"
+          style={{ ["--i" as string]: 1 }}
+        >
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[9px] bg-sun text-pine-deep">
             <ListIcon />
           </span>
-          <span className="min-w-0">
-            <span className="block font-display text-base font-bold tracking-tight text-ink">
+          <span className="min-w-0 flex-1">
+            <span className="block font-display text-[15px] font-semibold tracking-tight text-ink">
               Manage audiences
             </span>
             <span className="block text-sm text-ash">
@@ -116,6 +130,7 @@ export default async function HomePage() {
                 : "Paste a list to get started."}
             </span>
           </span>
+          <Arrow />
         </Link>
       </section>
 
@@ -123,8 +138,11 @@ export default async function HomePage() {
       {all.length > 0 ? (
         <section className="mb-6">
           <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="font-display text-lg font-bold tracking-tight text-ink">Recent</h2>
-            <Link href="/app/campaigns" className="text-sm font-medium text-wine hover:underline">
+            <h2 className="font-display text-lg font-semibold tracking-tight text-ink">Recent</h2>
+            <Link
+              href="/app/campaigns"
+              className="text-sm font-medium text-pine underline-offset-4 hover:underline"
+            >
               See all {all.length}
             </Link>
           </div>
@@ -134,10 +152,10 @@ export default async function HomePage() {
               <li key={campaign.id}>
                 <Link
                   href={`/app/campaigns/${campaign.id}`}
-                  className="card flex items-center gap-3 px-4 py-3.5 transition-colors hover:border-wine"
+                  className="card tap flex items-center gap-3 px-4 py-3.5"
                 >
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate font-semibold text-ink">{campaign.name}</span>
+                    <span className="block truncate font-medium text-ink">{campaign.name}</span>
                     <span className="block truncate text-sm text-ash">
                       {campaign.status === "draft"
                         ? `edited ${formatWhen(campaign.updated_at)}`
@@ -153,21 +171,37 @@ export default async function HomePage() {
       ) : null}
 
       {/* guide nudge */}
-      <Link href="/app/guide" className="card lift flex items-center gap-4 p-4">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line bg-paper text-wine">
+      <Link href="/app/guide" className="card lift group flex items-center gap-4 p-4">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[9px] border border-line bg-paper text-pine">
           <BookIcon />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block font-display text-base font-bold tracking-tight text-ink">
+          <span className="block font-display text-[15px] font-semibold tracking-tight text-ink">
             How Permail works
           </span>
           <span className="block text-sm text-ash">
             Merge tags, fallbacks, importing, and what Gmail lets you send.
           </span>
         </span>
-        <span className="text-lg text-wine">→</span>
+        <Arrow />
       </Link>
     </>
+  );
+}
+
+function Arrow() {
+  return (
+    <svg
+      className="nudge shrink-0 text-mist"
+      width="17"
+      height="17"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+    >
+      <path d="M5 12h13M12.5 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 

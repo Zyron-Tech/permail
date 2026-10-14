@@ -13,38 +13,40 @@ export function PageHeader({
   return (
     <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
       <div>
-        {eyebrow ? <p className="eyebrow mb-2 text-wine">{eyebrow}</p> : null}
-        <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">{title}</h1>
+        {eyebrow ? <p className="eyebrow mb-2 text-mist">{eyebrow}</p> : null}
+        <h1 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-[2.35rem]">
+          {title}
+        </h1>
       </div>
       {action}
     </div>
   );
 }
 
-const CAMPAIGN_TONE: Record<CampaignStatus, string> = {
-  draft: "border-line bg-paper text-ash",
-  sending: "border-sun bg-sun-soft text-wine",
-  sent: "border-wine bg-wine text-sun",
-  failed: "border-wine bg-wine-soft text-wine",
-};
-
-const RECIPIENT_TONE: Record<RecipientStatus, string> = {
-  pending: "border-line bg-paper text-ash",
-  sending: "border-sun bg-sun-soft text-wine",
-  sent: "border-wine bg-wine text-sun",
-  failed: "border-wine bg-wine-soft text-wine",
+/**
+ * One tone per state, shared by campaigns and recipients. Pine means it went,
+ * brass means it is going, and wine is reserved for failure — nothing else in
+ * the product is red.
+ */
+const TONE: Record<CampaignStatus | RecipientStatus, string> = {
+  draft: "border-line bg-card text-ash",
+  pending: "border-line bg-card text-mist",
+  sending: "border-sun-soft bg-sun-pale text-pine-deep",
+  sent: "border-pine bg-pine text-cream",
+  failed: "border-wine/25 bg-wine-pale text-wine",
 };
 
 export function StatusPill({ status }: { status: CampaignStatus | RecipientStatus }) {
-  const tone =
-    status in CAMPAIGN_TONE
-      ? CAMPAIGN_TONE[status as CampaignStatus]
-      : RECIPIENT_TONE[status as RecipientStatus];
-
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider ${tone}`}
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider ${TONE[status]}`}
     >
+      {status === "sending" ? (
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sun-dim opacity-75" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-sun-dim" />
+        </span>
+      ) : null}
       {status}
     </span>
   );
@@ -55,20 +57,21 @@ export function EmptyState({
   body,
   actionHref,
   actionLabel,
+  art,
   children,
 }: {
   title: string;
   body: string;
   actionHref?: string;
   actionLabel?: string;
+  /** A drawing of what is missing — see components/app-art.tsx. */
+  art?: React.ReactNode;
   children?: React.ReactNode;
 }) {
   return (
-    <div className="card flex flex-col items-center px-6 py-14 text-center">
-      <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-sun font-display text-lg font-bold text-wine">
-        +
-      </div>
-      <h2 className="text-xl font-semibold text-ink">{title}</h2>
+    <div className="card enter flex flex-col items-center px-6 py-12 text-center sm:py-16">
+      {art ? <div className="mb-7 w-full max-w-[260px]">{art}</div> : null}
+      <h2 className="font-display text-xl font-semibold tracking-tight text-ink">{title}</h2>
       <p className="mt-2 max-w-sm text-sm leading-relaxed text-ash">{body}</p>
       {actionHref && actionLabel ? (
         <Link href={actionHref} className="btn btn-primary mt-6">

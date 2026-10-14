@@ -29,7 +29,7 @@ export default function GuidePage() {
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="shrink-0 rounded-full border border-line bg-card px-3.5 py-1.5 text-sm font-medium text-ash transition-colors hover:border-wine hover:text-wine"
+            className="shrink-0 rounded-full border border-line bg-card px-3.5 py-1.5 text-sm font-medium text-ash transition-colors hover:border-pine hover:text-pine"
           >
             {section.label}
           </a>
@@ -213,8 +213,8 @@ export default function GuidePage() {
         </Section>
       </div>
 
-      <div className="card edge-sun mt-10 max-w-2xl p-5 text-center">
-        <h2 className="font-display text-xl font-bold tracking-tight text-ink">
+      <div className="card mt-10 max-w-2xl p-5 text-center">
+        <h2 className="font-display text-xl font-semibold tracking-tight text-ink">
           That&apos;s the whole thing.
         </h2>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-ash">
@@ -241,8 +241,8 @@ function Section({
 }) {
   return (
     <section id={id} className="scroll-mt-24">
-      <p className="eyebrow mb-2 text-wine">[{number}]</p>
-      <h2 className="mb-4 text-2xl font-bold tracking-tight text-ink sm:text-3xl">{title}</h2>
+      <p className="eyebrow mb-2 text-pine">[{number}]</p>
+      <h2 className="mb-4 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{title}</h2>
       <div className="guide-body space-y-4 leading-relaxed text-ash">{children}</div>
     </section>
   );
@@ -256,7 +256,7 @@ function Example({ rows }: { rows: [string, string][] }) {
           key={from}
           className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 border-b border-line px-3.5 py-2.5 last:border-0 sm:gap-4 sm:px-4"
         >
-          <span className="font-mono text-[13px] text-wine">{from}</span>
+          <span className="font-mono text-[13px] text-pine">{from}</span>
           <span className="text-mist">→</span>
           <span className="text-[13px] text-ink">{to}</span>
         </div>
@@ -267,8 +267,8 @@ function Example({ rows }: { rows: [string, string][] }) {
 
 function Callout({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-[16px] border border-sun bg-sun-pale p-4">
-      <p className="mb-1.5 font-semibold text-wine">{title}</p>
+    <div className="rounded-[10px] border border-sun-soft bg-sun-pale p-4">
+      <p className="mb-1.5 font-semibold text-pine">{title}</p>
       <div className="text-sm leading-relaxed text-ink/80">{children}</div>
     </div>
   );
@@ -276,7 +276,7 @@ function Callout({ title, children }: { title: string; children: React.ReactNode
 
 function Trouble({ problem, fix }: { problem: string; fix: string }) {
   return (
-    <div className="border-l-2 border-wine pl-4">
+    <div className="border-l-2 border-pine pl-4">
       <p className="font-semibold text-ink">{problem}</p>
       <p className="mt-1 text-sm leading-relaxed text-ash">{fix}</p>
     </div>
